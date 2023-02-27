@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol"; 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol"; 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract NFTStaking is ERC20, ERC721Holder, Ownable {
     IERC721 public nft;
@@ -35,13 +36,17 @@ contract NFTStaking is ERC20, ERC721Holder, Ownable {
     }
     function calculateToken() public view returns(uint256){
         require(amountOwner[msg.sender] >0 ,"No token staked");
-        uint256 timeElapsed = (block.timestamp - AmountStakedAt[msg.sender])%2;
+        uint256 timeElapsed = (block.timestamp - AmountStakedAt[msg.sender])/31536000;
         uint256 _amount = amountOwner[msg.sender];
         // percentage
-        // uint256 ratio = 1/1000;
+        // uint256 ratio = 10/100;/
         // 0.01% daily
         // uint256 rewardPerDay = timeElapsed * _amount ;
-        uint256 reward = _amount*10**((1*timeElapsed)/1000);
+        // uint A = SafeMath.div(10**(1*timeElapsed),1000);
+        // uint reward2 = SafeMath.mul(_amount, A);
+        uint256 reward = _amount*10**((20*timeElapsed)/100);
+        
+        
         
 
         // A = P (1 + r/365)365t
@@ -64,12 +69,12 @@ contract NFTStaking is ERC20, ERC721Holder, Ownable {
         // return timeElapsed* EMISSION_RATE;
         return reward;
     }
-    function unStake() external{
+    function unStake() external {
         // require(TokenOwnerOf[tokenId] == msg.sender, "You can't unstake");
         require(amountOwner[msg.sender] >0, "This account doen not have enough balance");
         _mint(msg.sender, calculateToken());
         // nft.transferFrom(address(this), msg.sender, tokenId);
-        stakedToken.transfer(msg.sender, amountOwner[msg.sender]);
+        // stakedToken.transfer(msg.sender, amountOwner[msg.sender]);
         // delete TokenOwnerOf[tokenId];
         // delete TokenStakedAt[tokenId];
     } 

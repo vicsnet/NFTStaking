@@ -36,16 +36,20 @@ const impersonatedSigner = await ethers.getSigner(ApeHolder1);
 const stakeToken = ethers.utils.parseEther("50");
  await USDCConnect.connect(impersonatedSigner).approve(nftStaking.address, 350000000  );
 
-  await nftStaking.connect(impersonatedSigner).stake(50000);
+  await nftStaking.connect(impersonatedSigner).stake(100000);
 
   console.log(await USDCConnect.balanceOf(ApeHolder1));
 
-  await ethers.provider.send("evm_mine", [1678048146]);
+  await ethers.provider.send("evm_mine", [1749155346]);
 
 const calculateToken = await nftStaking.connect(impersonatedSigner).calculateToken();
-console.log(await calculateToken)
+console.log (` interst is ${calculateToken}`)
 
+const unStake = await nftStaking.connect(impersonatedSigner).unStake();
+console.log (unStake)
+const tokenBalance = await nftStaking.balanceOf(ApeHolder1);
 
+console.log(tokenBalance)
 
 }
 main().catch((error) => {
